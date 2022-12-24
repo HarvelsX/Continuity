@@ -25,7 +25,6 @@ import me.pepperbell.continuity.api.client.CTMProperties;
 import me.pepperbell.continuity.api.client.CTMPropertiesFactory;
 import me.pepperbell.continuity.client.ContinuityClient;
 import me.pepperbell.continuity.client.resource.ResourcePackUtil;
-import me.pepperbell.continuity.client.resource.ResourceRedirectHandler;
 import me.pepperbell.continuity.client.util.MathUtil;
 import me.pepperbell.continuity.client.util.TextureUtil;
 import me.pepperbell.continuity.client.util.biome.BiomeHolder;
@@ -623,7 +622,6 @@ public class BaseCTMProperties implements CTMProperties {
 	protected void resolveTiles() {
 		textureDependencies = new ObjectOpenHashSet<>();
 		spriteIds = new ObjectArrayList<>();
-		ResourceRedirectHandler redirectHandler = ResourceRedirectHandler.get();
 
 		for (Identifier tile : tiles) {
 			SpriteIdentifier spriteId;
@@ -636,20 +634,13 @@ public class BaseCTMProperties implements CTMProperties {
 				String path = tile.getPath();
 				if (path.startsWith("textures/")) {
 					path = path.substring(9);
-					if (path.endsWith(".png")) {
-						path = path.substring(0, path.length() - 4);
-					}
-
-					spriteId = TextureUtil.toSpriteId(new Identifier(namespace, path));
-					textureDependencies.add(spriteId);
-				} else if (redirectHandler != null) {
-					path = redirectHandler.getSourceSpritePath(path);
-
-					spriteId = TextureUtil.toSpriteId(new Identifier(namespace, path));
-					textureDependencies.add(spriteId);
-				} else {
-					spriteId = TextureUtil.MISSING_SPRITE_ID;
 				}
+
+				if (path.endsWith(".png")) {
+					path = path.substring(0, path.length() - 4);
+				}
+				spriteId = TextureUtil.toSpriteId(new Identifier(namespace, path));
+				textureDependencies.add(spriteId);
 			}
 			spriteIds.add(spriteId);
 		}

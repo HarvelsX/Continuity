@@ -10,7 +10,6 @@
     "ChunkRendererRegionMixin",
     "FallingBlockEntityRendererMixin",
     "IdentifierMixin",
-    "LifecycledResourceManagerImplMixin",
     "ModelLoaderAccessor",
     "ModelLoaderMixin",
     "NamespaceResourceManagerMixin",

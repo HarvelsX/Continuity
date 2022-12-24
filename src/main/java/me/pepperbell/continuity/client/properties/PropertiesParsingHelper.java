@@ -17,7 +17,6 @@ import com.google.common.collect.ImmutableSet;
 
 import me.pepperbell.continuity.client.ContinuityClient;
 import me.pepperbell.continuity.client.processor.Symmetry;
-import me.pepperbell.continuity.client.resource.ResourceRedirectHandler;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -38,7 +37,6 @@ public final class PropertiesParsingHelper {
 		String[] matchTileStrs = matchTilesStr.trim().split(" ");
 		if (matchTileStrs.length != 0) {
 			String basePath = FilenameUtils.getPath(fileLocation.getPath());
-			ResourceRedirectHandler redirectHandler = ResourceRedirectHandler.get();
 			ImmutableSet.Builder<Identifier> setBuilder = ImmutableSet.builder();
 
 			for (int i = 0; i < matchTileStrs.length; i++) {
@@ -70,11 +68,6 @@ public final class PropertiesParsingHelper {
 						}
 						if (path.startsWith("textures/")) {
 							path = path.substring(9);
-						} else if (path.startsWith("optifine/")) {
-							if (redirectHandler == null) {
-								continue;
-							}
-							path = redirectHandler.getSourceSpritePath(path + ".png");
 						}
 
 						try {
