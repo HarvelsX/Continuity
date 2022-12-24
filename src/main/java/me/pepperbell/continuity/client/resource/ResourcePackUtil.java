@@ -15,7 +15,7 @@ public class ResourcePackUtil {
 	private static ResourcePack[] resourcePacks;
 
 	public static DefaultResourcePack getDefaultResourcePack() {
-		return MinecraftClient.getInstance().getResourcePackProvider().getPack();
+		return MinecraftClient.getInstance().getDefaultResourcePack();
 	}
 
 	@ApiStatus.Internal
@@ -27,7 +27,7 @@ public class ResourcePackUtil {
 	@Nullable
 	public static ResourcePack getProvidingResourcePack(Identifier resourceId) {
 		for (ResourcePack resourcePack : resourcePacks) {
-			if (resourcePack.contains(ResourceType.CLIENT_RESOURCES, resourceId)) {
+			if (resourcePack.open(ResourceType.CLIENT_RESOURCES, resourceId) != null) {
 				return resourcePack;
 			}
 		}

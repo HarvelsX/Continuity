@@ -1,10 +1,7 @@
 package me.pepperbell.continuity.client.resource;
 
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 import java.util.function.Consumer;
 
 import org.apache.http.annotation.Contract;
@@ -55,16 +52,17 @@ public final class CTMPropertiesLoader {
 	private static void loadAll(ResourcePack pack, int packPriority) {
 		String packName = pack.getName();
 		for (String namespace : pack.getNamespaces(ResourceType.CLIENT_RESOURCES)) {
-			Collection<Identifier> ids = pack.findResources(ResourceType.CLIENT_RESOURCES, namespace, "optifine/ctm", id -> id.getPath().endsWith(".properties"));
-			for (Identifier id : ids) {
-				try (InputStream stream = pack.open(ResourceType.CLIENT_RESOURCES, id)) {
+			pack.findResources(ResourceType.CLIENT_RESOURCES, namespace, "optifine/ctm", (identifier, inputSupplier) -> {
+				if (inputSupplier == null || !identifier.getPath().endsWith(".properties")) return;
+
+				try (InputStream stream = inputSupplier.get()) {
 					Properties properties = new Properties();
 					properties.load(stream);
-					load(properties, id, packName, packPriority);
+					load(properties, identifier, packName, packPriority);
 				} catch (Exception e) {
-					ContinuityClient.LOGGER.error("Failed to load CTM properties from file '" + id + "' in pack '" + packName + "'", e);
+					ContinuityClient.LOGGER.error("Failed to load CTM properties from file '" + identifier + "' in pack '" + packName + "'", e);
 				}
-			}
+			});
 		}
 	}
 
@@ -180,12 +178,12 @@ public final class CTMPropertiesLoader {
 		return LIST_CREATOR.get();
 	}
 
-	public static void consumeAllAffecting(Collection<SpriteIdentifier> spriteIds, Consumer<CTMLoadingContainer<?>> consumer) {
+	public static void consumeAllAffecting(Collection<Identifier> spriteIds, Consumer<CTMLoadingContainer<?>> consumer) {
 		int amount = IGNORES_BLOCK.size();
 		for (int i = 0; i < amount; i++) {
 			CTMLoadingContainer<?> container = IGNORES_BLOCK.get(i);
-			for (SpriteIdentifier spriteId : spriteIds) {
-				if (container.getProperties().affectsTexture(spriteId.getTextureId())) {
+			for (Identifier spriteId : spriteIds) {
+				if (container.getProperties().affectsTexture(spriteId)) {
 					consumer.accept(container);
 					break;
 				}
@@ -194,7 +192,7 @@ public final class CTMPropertiesLoader {
 	}
 
 	@Nullable
-	public static List<CTMLoadingContainer<?>> getAllAffecting(Collection<SpriteIdentifier> spriteIds) {
+	public static List<CTMLoadingContainer<?>> getAllAffecting(Collection<Identifier> spriteIds) {
 		consumeAllAffecting(spriteIds, LIST_CREATOR);
 		return LIST_CREATOR.get();
 	}

@@ -8,9 +8,9 @@ import net.fabricmc.fabric.api.renderer.v1.material.BlendMode;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
+import net.minecraft.registry.Registries;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
-import net.minecraft.util.registry.Registry;
 
 public class OverlayPropertiesSection {
 	protected Properties properties;
@@ -71,7 +71,7 @@ public class OverlayPropertiesSection {
 				return;
 			}
 
-			Block block = Registry.BLOCK.get(blockId);
+			Block block = Registries.BLOCK.get(blockId);
 			if (block != Blocks.AIR) {
 				tintBlock = block.getDefaultState();
 			} else {

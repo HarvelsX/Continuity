@@ -10,7 +10,7 @@ import net.minecraft.client.render.block.BlockModels;
 
 @Mixin(BlockModels.class)
 public class BlockModelsMixin {
-	@Inject(method = "reload()V", at = @At("HEAD"))
+	@Inject(method = "setModels", at = @At("HEAD"))
 	private void onHeadReload(CallbackInfo ci) {
 		SpriteCalculator.clearCache();
 	}

@@ -40,7 +40,7 @@ public class BaseProcessingPredicate implements ProcessingPredicate {
 	@Override
 	public boolean shouldProcessQuad(QuadView quad, Sprite sprite, BlockRenderView blockView, BlockState state, BlockPos pos, ProcessingDataProvider dataProvider) {
 		if (matchTilesSet != null) {
-			if (!matchTilesSet.contains(sprite.getId())) {
+			if (!matchTilesSet.contains(sprite.getContents().getId())) {
 				return false;
 			}
 		}

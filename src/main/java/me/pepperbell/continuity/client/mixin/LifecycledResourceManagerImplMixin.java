@@ -29,7 +29,7 @@ public class LifecycledResourceManagerImplMixin implements LifecycledResourceMan
 		}
 	}
 
-	@ModifyVariable(method = "getResource(Lnet/minecraft/util/Identifier;)Ljava/util/Optional;", at = @At("HEAD"))
+	@ModifyVariable(method = "getResource(Lnet/minecraft/util/Identifier;)Ljava/util/Optional;", at = @At("HEAD"), argsOnly = true)
 	private Identifier redirectGetResourceId(Identifier id) {
 		if (redirectHandler != null) {
 			return redirectHandler.redirect(id);
@@ -37,7 +37,7 @@ public class LifecycledResourceManagerImplMixin implements LifecycledResourceMan
 		return id;
 	}
 
-	@ModifyVariable(method = "getAllResources(Lnet/minecraft/util/Identifier;)Ljava/util/List;", at = @At("HEAD"))
+	@ModifyVariable(method = "getAllResources(Lnet/minecraft/util/Identifier;)Ljava/util/List;", at = @At("HEAD"), argsOnly = true)
 	private Identifier redirectGetAllResourcesId(Identifier id) {
 		if (redirectHandler != null) {
 			return redirectHandler.redirect(id);

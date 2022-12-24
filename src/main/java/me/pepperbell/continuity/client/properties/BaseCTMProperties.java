@@ -10,6 +10,7 @@ import java.util.function.IntPredicate;
 import java.util.function.Predicate;
 import java.util.regex.Pattern;
 
+import net.minecraft.registry.Registries;
 import org.apache.commons.io.FilenameUtils;
 import org.apache.commons.lang3.StringEscapeUtils;
 import org.jetbrains.annotations.NotNull;
@@ -38,7 +39,6 @@ import net.minecraft.resource.ResourcePack;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 
 public class BaseCTMProperties implements CTMProperties {
@@ -174,7 +174,7 @@ public class BaseCTMProperties implements CTMProperties {
 			if (baseName.startsWith("block_")) {
 				try {
 					Identifier id = new Identifier(baseName.substring(6));
-					Block block = Registry.BLOCK.get(id);
+					Block block = Registries.BLOCK.get(id);
 					if (block != Blocks.AIR) {
 						matchBlocksPredicate = state -> state.getBlock() == block;
 					}

@@ -1,10 +1,6 @@
 package me.pepperbell.continuity.client.resource;
 
-import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
 
@@ -13,20 +9,18 @@ import com.mojang.datafixers.util.Pair;
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import it.unimi.dsi.fastutil.objects.ObjectOpenHashSet;
-import me.pepperbell.continuity.client.mixinterface.SpriteAtlasTextureDataExtension;
 import me.pepperbell.continuity.client.model.CTMUnbakedModel;
 import me.pepperbell.continuity.client.model.EmissiveUnbakedModel;
 import me.pepperbell.continuity.client.util.VoidSet;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.render.model.UnbakedModel;
-import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.ModelIdentifier;
-import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
 
 public class ModelWrappingHandler {
 	private static final Map<ModelIdentifier, BlockState> MODEL_ID_2_STATE_MAP = new Object2ObjectOpenHashMap<>();
 	private static final Map<ModelIdentifier, List<CTMLoadingContainer<?>>> MODEL_ID_2_CONTAINERS_MAP = new Object2ObjectOpenHashMap<>();
+	private static final Map<Identifier, Identifier> EMISSIVE_ID_MAP = new Object2ObjectOpenHashMap<>();
 
 	public static void onAddBlockStateModel(ModelIdentifier id, BlockState state) {
 		MODEL_ID_2_STATE_MAP.put(id, state);
@@ -34,6 +28,10 @@ public class ModelWrappingHandler {
 		if (containerList != null) {
 			MODEL_ID_2_CONTAINERS_MAP.put(id, containerList);
 		}
+	}
+
+	public static void addEmissiveAssigns(Map<Identifier, Identifier> map) {
+		EMISSIVE_ID_MAP.putAll(map);
 	}
 
 	public static void wrapCTMModels(Map<Identifier, UnbakedModel> unbakedModels, Map<Identifier, UnbakedModel> modelsToBake) {
@@ -50,9 +48,9 @@ public class ModelWrappingHandler {
 		modelsToBake.forEach((id, model) -> {
 			// Only wrap final block state models
 			if (id instanceof ModelIdentifier modelId && isBlockStateModelId(modelId)) {
-				Collection<SpriteIdentifier> dependencies;
+				Collection<Identifier> dependencies;
 				try {
-					dependencies = model.getTextureDependencies(unbakedModelGetter, voidSet);
+					dependencies = model.getModelDependencies();
 				} catch (ModelNotLoadedException e) {
 					return;
 				}
@@ -105,20 +103,8 @@ public class ModelWrappingHandler {
 		injectWrappedModels(wrappedModels, unbakedModels, modelsToBake);
 	}
 
-	public static void wrapEmissiveModels(Map<Identifier, Pair<SpriteAtlasTexture, SpriteAtlasTexture.Data>> spriteAtlasData, Map<Identifier, UnbakedModel> unbakedModels, Map<Identifier, UnbakedModel> modelsToBake) {
-		Set<SpriteIdentifier> spriteIdsToWrap = new ObjectOpenHashSet<>();
-
-		spriteAtlasData.forEach((atlasId, pair) -> {
-			SpriteAtlasTexture.Data data = pair.getSecond();
-			Map<Identifier, Identifier> emissiveIdMap = ((SpriteAtlasTextureDataExtension) data).getEmissiveIdMap();
-			if (emissiveIdMap != null) {
-				for (Identifier id : emissiveIdMap.keySet()) {
-					spriteIdsToWrap.add(new SpriteIdentifier(atlasId, id));
-				}
-			}
-		});
-
-		if (spriteIdsToWrap.isEmpty()) {
+	public static void wrapEmissiveModels(Map<Identifier, UnbakedModel> unbakedModels, Map<Identifier, UnbakedModel> modelsToBake) {
+		if (EMISSIVE_ID_MAP.isEmpty()) {
 			return;
 		}
 
@@ -127,21 +113,22 @@ public class ModelWrappingHandler {
 		VoidSet<Pair<String, String>> voidSet = VoidSet.get();
 
 		unbakedModels.forEach((id, model) -> {
-			Collection<SpriteIdentifier> dependencies;
+			Collection<Identifier> dependencies;
 			try {
-				dependencies = model.getTextureDependencies(unbakedModelGetter, voidSet);
+				dependencies = model.getModelDependencies();
 			} catch (ModelNotLoadedException e) {
 				return;
 			}
 
-			for (SpriteIdentifier spriteId : dependencies) {
-				if (spriteIdsToWrap.contains(spriteId)) {
+			for (Identifier spriteId : dependencies) {
+				if (EMISSIVE_ID_MAP.containsKey(spriteId)) {
 					wrappedModels.put(id, new EmissiveUnbakedModel(model));
 					return;
 				}
 			}
 		});
 
+		EMISSIVE_ID_MAP.clear();
 		injectWrappedModels(wrappedModels, unbakedModels, modelsToBake);
 	}
 

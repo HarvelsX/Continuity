@@ -4,6 +4,8 @@
   "package": "me.pepperbell.continuity.client.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "AtlasLoaderMixin",
+    "BakedModelManagerMixin",
     "BlockModelsMixin",
     "ChunkRendererRegionMixin",
     "FallingBlockEntityRendererMixin",
@@ -15,8 +17,7 @@
     "PistonBlockEntityRendererMixin",
     "ReloadableResourceManagerImplAccessor",
     "RenderLayersMixin",
-    "SpriteAtlasTextureDataMixin",
-    "SpriteAtlasTextureMixin",
+    "SpriteLoaderMixin",
     "SpriteMixin"
   ],
   "injectors": {

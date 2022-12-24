@@ -2,11 +2,11 @@ package me.pepperbell.continuity.client.util.biome;
 
 import java.util.Map;
 
+import net.minecraft.registry.Registry;
 import org.jetbrains.annotations.Nullable;
 
 import me.pepperbell.continuity.client.ContinuityClient;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.biome.Biome;
 
 public class BiomeHolder {

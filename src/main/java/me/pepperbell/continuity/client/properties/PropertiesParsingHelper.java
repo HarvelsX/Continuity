@@ -7,6 +7,7 @@ import java.util.Properties;
 import java.util.function.IntFunction;
 import java.util.function.Predicate;
 
+import net.minecraft.registry.Registries;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -23,7 +24,6 @@ import net.minecraft.block.Blocks;
 import net.minecraft.state.property.Property;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.InvalidIdentifierException;
-import net.minecraft.util.registry.Registry;
 
 public final class PropertiesParsingHelper {
 	public static final Predicate<BlockState> EMPTY_BLOCK_STATE_PREDICATE = state -> false;
@@ -125,7 +125,7 @@ public final class PropertiesParsingHelper {
 							continue;
 						}
 
-						Block block = Registry.BLOCK.get(blockId);
+						Block block = Registries.BLOCK.get(blockId);
 						if (block != Blocks.AIR) {
 							if (parts.length > startIndex) {
 								ImmutableMap.Builder<Property<?>, Comparable<?>[]> propertyMapBuilder = ImmutableMap.builder();

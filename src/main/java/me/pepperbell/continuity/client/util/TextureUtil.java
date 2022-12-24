@@ -1,7 +1,6 @@
 package me.pepperbell.continuity.client.util;
 
 import net.minecraft.client.texture.MissingSprite;
-import net.minecraft.client.texture.Sprite;
 import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.client.util.SpriteIdentifier;
 import net.minecraft.util.Identifier;
@@ -13,7 +12,7 @@ public final class TextureUtil {
 		return new SpriteIdentifier(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE, id);
 	}
 
-	public static boolean isMissingSprite(Sprite sprite) {
+	public static boolean isMissingSprite(Object sprite) {
 		return sprite instanceof MissingSprite;
 	}
 }
